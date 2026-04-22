@@ -13,6 +13,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Build Stage"
+                    echo "Hello"
                     npm ci
                     npm run build
                     ls -la build
