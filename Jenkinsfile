@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        /*
+
         stage('Build') {
             agent {
                 docker {
@@ -12,30 +12,27 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
-                    node --version
-                    npm --version
+                    echo "Build Stage"
                     npm ci
                     npm run build
-                    ls -la
+                    ls -la build
                 '''
             }
         }
-        */
 
         stage('Tests') {
             parallel {
-                  stage('Unit Test') {
+
+                stage('Unit Test') {
                     agent {
                         docker {
                             image 'node:18-alpine'
                             reuseNode true
                         }
                     }
-                    
                     steps {
                         sh '''
-                            echo "Test Stage"
+                            echo "Unit Test Stage"
                             test -f build/index.html
                             npm test
                         '''
@@ -46,14 +43,12 @@ pipeline {
                     agent {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.58.2-noble'
-                            alwaysPull true
+                            reuseNode true
                         }
                     }
-                    
                     steps {
                         sh '''
-                            npm install serve
-                            node_modules/.bin/serve -s build &
+                            echo "E2E Stage"
                             npx playwright test
                         '''
                     }
@@ -64,7 +59,7 @@ pipeline {
 
     post {
         always {
-            junit 'test-results/junit.xml'
+            junit 'test-results/**/*.xml'
         }
     }
 }
