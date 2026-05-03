@@ -47,15 +47,8 @@ pipeline {
 
             }
         }
-    }
 
-    post {
-        always {
-            junit 'test-results/**/*.xml'
-        }
-    }
-
-          stage('Deploy') {
+        stage('Deploy') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -65,9 +58,16 @@ pipeline {
             steps {
                 sh '''
                     npm install netlify-cli
-                    ntlify --version
+                    netlify --version
                     echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
                 '''
             }
         }
+    }
+
+    post {
+        always {
+            junit 'test-results/**/*.xml'
+        }
+    }
 }
