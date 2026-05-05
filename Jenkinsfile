@@ -17,6 +17,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo 'Small change"
                     echo "Build Stage"
                     echo "Helloo"
                     npm ci
